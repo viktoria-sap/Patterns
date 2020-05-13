@@ -1,7 +1,6 @@
 package ru.netology.web;
 
 import com.github.javafaker.Faker;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Keys;
@@ -17,11 +16,11 @@ import static com.codeborne.selenide.Selenide.*;
 
 class RegistrationTest {
 
-    private Faker faker;
+    private RegistrationByCardInfo registrationInfo;
 
     @BeforeEach
     void setUpAll() {
-        faker = new Faker(new Locale("ru"));
+        registrationInfo = DataGenerator.Registration.generateByCard("ru");
     }
 
     @Test
@@ -36,24 +35,20 @@ class RegistrationTest {
         SimpleDateFormat format2 = new SimpleDateFormat("dd");
         String str1 = format2.format(date1.getTime());
 
-        String cityName = faker.address().cityName();
-        String name = faker.name().fullName();
-        String phoneNumber = faker.phoneNumber().phoneNumber();
         open("http://localhost:9999");
-        $("[placeholder='Город']").setValue(cityName);
+        $("[placeholder='Город']").setValue(registrationInfo.getCity());
         $("[placeholder='Дата встречи']").doubleClick().sendKeys(Keys.BACK_SPACE);
         $("[placeholder='Дата встречи']").setValue(str);
-        $("[name='name']").setValue(name);
-        $("[name='phone']").setValue(phoneNumber);
+        $("[name='name']").setValue(registrationInfo.getName());
+        $("[name='phone']").setValue(registrationInfo.getPhone());
         $("span[class='checkbox__text']").click();
         $$("button").find(exactText("Запланировать")).click();
 
         $("span[class='input__icon']").click();
         $("table[class='calendar__layout']").find(byText(str1)).click();
-        $$("button").find(exactText("Запланировать")).click();
-        $$("button").find(exactText("Перепланировать")).click();
-//        $$("[data-test-id='replan-notification']").find(exactText("Перепланировать")).click();
-        $(byText("Успешно")).shouldBe(visible);
+        $$("span.button__text").find(exactText("Запланировать")).click();
+        $$("span.button__text").find(exactText("Перепланировать")).click();
+        $("[data-test-id=success-notification]").waitUntil(visible, 15000);
     }
 
 }
