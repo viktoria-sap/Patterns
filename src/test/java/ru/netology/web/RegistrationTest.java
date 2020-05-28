@@ -1,12 +1,12 @@
 package ru.netology.web;
 
+import com.codeborne.selenide.logevents.SelenideLogger;
+import io.qameta.allure.selenide.AllureSelenide;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Keys;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.*;
@@ -15,6 +15,16 @@ import static com.codeborne.selenide.Selenide.*;
 class RegistrationTest {
 
     private RegistrationByCardInfo registrationInfo;
+
+    @BeforeAll
+    static void setUpBeforeAll() {
+        SelenideLogger.addListener("allure", new AllureSelenide());
+    }
+
+    @AfterAll
+    static void tearDownAll() {
+        SelenideLogger.removeListener("allure");
+    }
 
     @BeforeEach
     void setUpAll() {
@@ -33,8 +43,8 @@ class RegistrationTest {
         $("span[class='checkbox__text']").click();
         $$("button").find(exactText("Запланировать")).click();
 
-        $("span[class='input__icon']").click();
-        $("table[class='calendar__layout']").find(byText(DataGenerator.Registration.generateDate8())).click();
+        $("input[placeholder='Дата встречи']").doubleClick().sendKeys(Keys.BACK_SPACE);
+        $("input[placeholder='Дата встречи']").sendKeys(DataGenerator.Registration.generateDate8());
         $$("span.button__text").find(exactText("Запланировать")).click();
         $$("span.button__text").find(exactText("Перепланировать")).click();
         $("[data-test-id=success-notification]").waitUntil(visible, 15000);

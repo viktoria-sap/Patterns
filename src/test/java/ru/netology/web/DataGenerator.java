@@ -29,7 +29,7 @@ public class DataGenerator {
 
         public static String generateDate8() {
             LocalDate now = LocalDate.now().plusDays(8);
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MM yyyy");
             return now.format(formatter);
         }
 
